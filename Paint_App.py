@@ -1,5 +1,10 @@
 from tkinter import *
 from tkinter import ttk, colorchooser
+import PIL
+from PIL import Image, ImageDraw
+
+import pyautogui
+import time
 
 b1 = "up"
 xold, yold = None, None
@@ -10,9 +15,24 @@ brushtype="round"
 
 root = Tk()
 root.title("Paint Application")
-root.geometry('500x500')
-root.minsize(500,500)
-   
+root.geometry('800x800')
+root.minsize(800,800)
+
+
+def save(): 
+    # inaccurate drawings and saves a 1920x1080 png in white background
+    filename = 'image1.png'
+    image1.save(filename)
+    
+def save2():
+    # accurate but works for 1920x1080 screens while running the app as a maximized window
+    from PIL import ImageGrab
+    image = ImageGrab.grab(bbox=(150,60,1920,1020))
+    image.save('image2.png')
+
+def exitWindow():
+    exit()
+
 def penfunc():  
     global brushtype
     brushtype="round"
@@ -52,22 +72,25 @@ def motion(event):
         global xold, yold
         if xold is not None and yold is not None:
             event.widget.create_line(xold,yold,event.x,event.y,smooth=TRUE,fill=foreground,width=penwidth,capstyle=brushtype)
+            draw.line((xold, yold, event.x, event.y),fill=foreground,width=int(penwidth),joint='curve')
 
         xold = event.x
         yold = event.y
+    
 
 
 ####### toolbar menu ######
 main_menu=Menu(root,bg="#cedbff",tearoff=0)
 
+
 file_menu=Menu(main_menu,tearoff=0)
 file_menu.add_command(label='Help')
-file_menu.add_command(label='Save drawing')
-file_menu.add_command(label='Exit')
+file_menu.add_command(label='Save drawing 1',command = lambda : save())
+file_menu.add_command(label='Save drawing 2',command = lambda : save2())
 
 main_menu.add_cascade(label='Options', menu = file_menu)
 main_menu.add_command(label='About')
-main_menu.add_command(label='Exit')
+main_menu.add_command(label='Exit',command=exitWindow)
 root.config(menu=main_menu)
 
 ####### tools #######
@@ -106,5 +129,7 @@ drawing_area.bind("<Motion>", motion)
 drawing_area.bind("<ButtonPress-1>", b1down)
 drawing_area.bind("<ButtonRelease-1>", b1up)
 
+image1 = PIL.Image.new('RGB', (1920, 1080), background)
+draw = ImageDraw.Draw(image1)
 
 root.mainloop()
