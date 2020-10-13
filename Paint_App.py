@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter import ttk, colorchooser
 import PIL
-from PIL import Image, ImageDraw
-
+from PIL import Image, ImageDraw, ImageGrab
 import pyautogui
 import time
+import threading
 
 b1 = "up"
 xold, yold = None, None
@@ -23,12 +23,16 @@ def save():
     # inaccurate drawings and saves a 1920x1080 png in white background
     filename = 'image1.png'
     image1.save(filename)
-    
+
 def save2():
     # accurate but works for 1920x1080 screens while running the app as a maximized window
-    from PIL import ImageGrab
+    root.wm_state("zoomed")
+    time.sleep(1)
     image = ImageGrab.grab(bbox=(150,60,1920,1020))
     image.save('image2.png')
+    root.wm_state("normal")
+
+t1=threading.Thread(target=save2)
 
 def exitWindow():
     exit()
@@ -86,7 +90,7 @@ main_menu=Menu(root,bg="#cedbff",tearoff=0)
 file_menu=Menu(main_menu,tearoff=0)
 file_menu.add_command(label='Help')
 file_menu.add_command(label='Save drawing 1',command = lambda : save())
-file_menu.add_command(label='Save drawing 2',command = lambda : save2())
+file_menu.add_command(label='Save drawing 2',command = lambda : t1.start())
 
 main_menu.add_cascade(label='Options', menu = file_menu)
 main_menu.add_command(label='About')
