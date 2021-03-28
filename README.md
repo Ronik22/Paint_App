@@ -1,5 +1,5 @@
 # Paint_App
 
 <p>
-    <img src="demo.png" alt="Paint App demo">
+    <img src="demo.jpg" alt="Paint App demo">
 </p>
